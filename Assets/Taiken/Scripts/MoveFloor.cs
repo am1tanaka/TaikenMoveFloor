@@ -9,7 +9,7 @@ public class MoveFloor : MonoBehaviour
     [Tooltip("移動速度"), SerializeField]
     float speed = 3;
 
-    Vector3 velocity;
+    public Vector3 velocity { get; private set; }
     int index;
     static float StopDistance => 0.01f;
 

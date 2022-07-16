@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     CharacterController chr;
     Vector3 velocity;
     Vector3 startPosition;
+    MoveFloor parentFloor;
 
     private void Awake()
     {
@@ -23,7 +24,12 @@ public class Player : MonoBehaviour
     {
         velocity.x = walkSpeed * Input.GetAxisRaw("Horizontal");
         velocity.y += Time.deltaTime * Physics.gravity.y;
-        chr.Move(Time.deltaTime * velocity);
+        Vector3 parent = Vector3.zero;
+        if (parentFloor != null)
+        {
+            parent = parentFloor.velocity;
+        }
+        chr.Move(Time.deltaTime * (velocity + parent));
         if (chr.isGrounded)
         {
             // 着地している
@@ -33,7 +39,12 @@ public class Player : MonoBehaviour
             if (Input.GetButtonDown("Jump"))
             {
                 velocity.y = jumpPower;
+                parentFloor = null;
             }
+        }
+        else
+        {
+            parentFloor = null;
         }
     }
 
@@ -44,11 +55,20 @@ public class Player : MonoBehaviour
             Debug.Log($"CLEAR!!");
             ToStart();
         }
-        if (other.CompareTag("Miss"))
+        else if (other.CompareTag("Miss"))
         {
             ToStart();
         }
     }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.collider.CompareTag("MoveFloor"))
+        {
+            parentFloor = hit.collider.GetComponent<MoveFloor>();
+        }
+    }
+
 
     void ToStart()
     {
@@ -56,5 +76,6 @@ public class Player : MonoBehaviour
         velocity = Vector3.zero;
         transform.position = startPosition;
         chr.enabled = true;
+        parentFloor = null;
     }
 }
