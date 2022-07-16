@@ -42,13 +42,19 @@ public class Player : MonoBehaviour
         if (other.CompareTag("Goal"))
         {
             Debug.Log($"CLEAR!!");
+            ToStart();
         }
         if (other.CompareTag("Miss"))
         {
-            chr.enabled = false;
-            velocity = Vector3.zero;
-            transform.position = startPosition;
-            chr.enabled = true;
+            ToStart();
         }
+    }
+
+    void ToStart()
+    {
+        chr.enabled = false;
+        velocity = Vector3.zero;
+        transform.position = startPosition;
+        chr.enabled = true;
     }
 }
